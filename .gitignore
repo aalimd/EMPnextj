@@ -1,3 +1,12 @@
+# Next.js build output (Cloudflare Pages publishes `out/`)
+out/
+.next/
+node_modules/
+tsconfig.tsbuildinfo
+
+# Keep legacy static source out of Pages deploys (served from `out/` only)
+# (legacy files remain in git for parity comparison during migration review)
+
 # macOS / Windows
 .DS_Store
 Thumbs.db

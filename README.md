@@ -1,4 +1,11 @@
-Latest learning update: [complete experience, verification and rollback](docs/COMPLETE-LEARNING-EXPERIENCE-2026-09-10.md).
+> **Next.js migration (in progress, same folder):** the TypeScript + React +
+> Next.js App Router implementation lives in `src/` and builds to `out/` for
+> Cloudflare Pages. See the [migration map](docs/MIGRATION-MAP.md) and
+> [Cloudflare Pages settings](docs/CLOUDFLARE-PAGES-NEXT.md). The legacy static
+> bundle (`index.html`, `assets/`, `sw.js`) remains in place as the
+> parity reference and is not published by Pages (publish directory: `out`).
+>
+> Latest learning update: [complete experience, verification and rollback](docs/COMPLETE-LEARNING-EXPERIENCE-2026-09-10.md).
 
 Latest code and hosting verification: [10 September release audit](docs/RELEASE-VERIFICATION-2026-09-10.md).
 
