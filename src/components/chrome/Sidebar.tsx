@@ -26,23 +26,36 @@ export default function Sidebar(): JSX.Element {
     return () => document.removeEventListener('keydown', onKey);
   }, [sidebarOpen, setSidebarOpen]);
 
-  // Legacy parity: hidden sidebar is removed from the accessibility tree
-  // (mobile drawer closed, or desktop rail collapsed).
+  // Hidden drawer/rail must not keep focus inside an inert ancestor
+  // (Chrome: "Blocked aria-hidden on an element because its descendant retained focus").
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 920px)');
     const sync = (): void => {
       const el = document.getElementById('sidebar');
       if (!el) return;
       const hidden = (mq.matches && !sidebarOpen) || (!mq.matches && collapsed);
+      if (hidden) {
+        const active = document.activeElement;
+        if (active instanceof HTMLElement && el.contains(active)) {
+          active.blur();
+          const stage = document.getElementById('stage');
+          if (stage instanceof HTMLElement) stage.focus({ preventScroll: true });
+        }
+      }
       const sidebar = el as HTMLElement & { inert?: boolean };
       try {
-        if (typeof sidebar.inert === 'boolean') sidebar.inert = hidden;
-        else if (hidden) sidebar.setAttribute('inert', '');
-        else sidebar.removeAttribute('inert');
+        if (typeof sidebar.inert === 'boolean') {
+          sidebar.inert = hidden;
+          sidebar.removeAttribute('aria-hidden');
+        } else if (hidden) {
+          sidebar.setAttribute('aria-hidden', 'true');
+        } else {
+          sidebar.removeAttribute('aria-hidden');
+        }
       } catch {
-        /* inert is best-effort */
+        if (hidden) sidebar.setAttribute('aria-hidden', 'true');
+        else sidebar.removeAttribute('aria-hidden');
       }
-      sidebar.setAttribute('aria-hidden', hidden ? 'true' : 'false');
     };
     sync();
     mq.addEventListener('change', sync);

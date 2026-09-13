@@ -11,7 +11,7 @@
  * cleanup touches only this namespace; saved progress (localStorage) and
  * other applications' caches/workers are never modified.
  */
-const CACHE_VERSION = 'v171';
+const CACHE_VERSION = 'v172';
 const SCOPE_KEY = encodeURIComponent(new URL(self.registration.scope).pathname);
 const CACHE_PREFIX = 'em-cps-scope-' + SCOPE_KEY + '-';
 const PAGES_CACHE = CACHE_PREFIX + 'pages-' + CACHE_VERSION;
@@ -84,6 +84,13 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
   if (!isSameOrigin(url)) return;
   if (url.pathname.endsWith('/sw.js')) return;
+
+  // Next.js App Router flight payloads (`index.txt?_rsc=`). Never serve the
+  // HTML app shell for these — that corrupts client navigation.
+  if (url.searchParams.has('_rsc') || /\.txt$/.test(url.pathname)) {
+    event.respondWith(fetch(request));
+    return;
+  }
 
   if (url.pathname.indexOf('/_next/static/') === 0) {
     event.respondWith(cacheFirst(request, STATIC_CACHE));
