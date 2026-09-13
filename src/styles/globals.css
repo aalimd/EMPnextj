@@ -5349,11 +5349,20 @@ a.side-btn { text-decoration: none; }
   .topbar > .tools-toggle { grid-column: 3; grid-row: 1; }
 }
 
+.nav-short { display: none; }
+.side-group > summary {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.side-group > summary .side-count { flex: none; }
+
 @media (max-width: 920px) {
   .topbar {
     display: grid;
     grid-template-columns: 44px minmax(0, 1fr) 44px;
-    grid-template-rows: 44px 48px;
+    grid-template-rows: 44px 52px;
     gap: 8px;
     padding: max(8px, env(safe-area-inset-top, 8px)) 12px 8px;
   }
@@ -5383,6 +5392,14 @@ a.side-btn { text-decoration: none; }
     gap: 4px;
     width: 100%;
   }
+  .topbar > .primary-nav #homeBtn,
+  .topbar > .primary-nav #studyBtn,
+  .topbar > .primary-nav #ecgBtn,
+  .topbar > .primary-nav #explorerBtn,
+  .topbar > .primary-nav #shiftBtn {
+    grid-column: auto !important;
+    grid-row: 1 !important;
+  }
   .primary-nav .home-btn,
   .primary-nav #homeBtn,
   .primary-nav #studyBtn,
@@ -5391,10 +5408,11 @@ a.side-btn { text-decoration: none; }
   .primary-nav #shiftBtn {
     width: 100%;
     min-width: 0;
-    height: 44px;
-    padding: 0;
+    height: 52px;
+    padding: 4px 0;
+    flex-direction: column;
     justify-content: center;
-    gap: 0;
+    gap: 2px;
   }
   .primary-nav .home-btn .header-label,
   .primary-nav #homeBtn .header-label,
@@ -5404,7 +5422,15 @@ a.side-btn { text-decoration: none; }
   .primary-nav #shiftBtn .header-label {
     display: none !important;
   }
-  .primary-nav .ui-icon { width: 20px; height: 20px; }
+  .primary-nav .nav-short {
+    display: block;
+    font-size: 9px;
+    font-weight: 650;
+    letter-spacing: .01em;
+    line-height: 1;
+    color: inherit;
+  }
+  .primary-nav .ui-icon { width: 18px; height: 18px; }
   .primary-nav .home-btn.active-nav { background: var(--ov-job-bg); color: var(--brand-2); }
 }
 
@@ -5412,18 +5438,34 @@ a.side-btn { text-decoration: none; }
   .home-actions { display: none; }
   .home-intro { padding-bottom: 12px; }
   .home-intro h1 { font-size: 1.7rem; margin: 8px 0 8px; }
-  .workspace-entry { margin: 4px 0 12px; gap: 8px; }
-  .workspace-entry > a { padding: 14px 14px 12px; }
-  .workspace-entry p { display: none; }
-  .workspace-entry strong { font-size: .95rem; }
-  .workspace-entry span { font-size: .7rem; margin-bottom: 4px; }
-  .workspace-entry b { margin-top: 8px; font-size: .8rem; }
-  .student-start { padding: 14px 16px; margin: 8px 0 16px; }
+  .workspace-entry { display: none; }
+  .student-start { padding: 14px 16px; margin: 16px 0 8px; }
   .student-start h2 { font-size: 1.05rem; margin: 4px 0 8px; }
   .student-start .student-actions { gap: 6px; }
   .student-start .student-actions a { font-size: .8rem; }
   .student-intro { padding: 12px 14px; }
-  .student-actions a { font-size: .8rem; }
-  .presentation-toc { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; }
+  .student-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .student-actions strong { width: 100%; }
+  .student-actions a {
+    flex: 1 1 0 !important;
+    min-width: 0;
+    text-align: center;
+    font-size: .8rem;
+  }
+  .presentation-toc {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+  .presentation-toc .section-jump {
+    flex: none;
+    white-space: nowrap;
+  }
   .explorer-controls { padding: 12px; gap: 8px; }
 }

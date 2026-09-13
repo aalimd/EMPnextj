@@ -160,9 +160,6 @@ export default function HomePage(): JSX.Element {
           <span id="offlineStatus">{offline}</span>
         </div>
       </section>
-      <WorkspaceEntry />
-      <StudyDashboard />
-      <StudyStarter />
       <section className="presentation-library" id="presentationLibrary" aria-labelledby="presentationLibraryTitle" tabIndex={-1}>
         <div className="library-head">
           <div>
@@ -218,6 +215,9 @@ export default function HomePage(): JSX.Element {
           <p className="empty-filter">No presentations match these filters. Try another patient context or severity.</p>
         )}
       </section>
+      <StudyDashboard />
+      <StudyStarter />
+      <WorkspaceEntry />
     </>
   );
 }

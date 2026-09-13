@@ -429,4 +429,4 @@ const E = ECG_ENGINE;
     bind(root,false);render(root,false);
   }
   if (typeof window !== 'undefined') window.addEventListener('hashchange',close);
-  export const ECG_EXPLORER={mount,build,cases,close,comparison,containsPoint,readProgress,pathways,readPractice,savePractice,nextPractice};
+  export const ECG_EXPLORER={mount,build,cases,close,comparison,containsPoint,readProgress,saveProgress,pathways,readPractice,savePractice,nextPractice};

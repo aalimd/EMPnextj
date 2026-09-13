@@ -92,7 +92,7 @@ function SearchBox(): JSX.Element {
         type="search"
         id="searchInput"
         ref={inputRef}
-        placeholder="Search a topic or clinical question…"
+        placeholder="Search presentations, ECG, cases…"
         autoComplete="off"
         autoCapitalize="off"
         autoCorrect="off"
@@ -282,18 +282,21 @@ export default function Topbar(): JSX.Element {
             <path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-8H9v8H4a1 1 0 0 1-1-1z" />
           </svg>
           <span className="header-label">Presentations</span>
+          <span className="nav-short">Home</span>
         </Link>
         <Link className={`home-btn utility-btn${nav === 'study' ? ' active-nav' : ''}`} id="studyBtn" href="/study/learn/practice" title="Practice and learning workspace (S)" aria-label="Open practice workspace" aria-current={nav === 'study' ? 'page' : undefined}>
           <svg className="ui-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 5v16M3 3h4a5 5 0 0 1 5 2 5 5 0 0 1 5-2h4v16h-4a5 5 0 0 0-5 2 5 5 0 0 0-5-2H3z" />
           </svg>
           <span className="header-label">Practice</span>
+          <span className="nav-short">Practice</span>
         </Link>
         <Link className={`home-btn utility-btn${nav === 'ecg' ? ' active-nav' : ''}`} id="ecgBtn" href="/ecg" title="ECG Interpretation from scratch (E)" aria-label="Open ECG Guide" aria-current={nav === 'ecg' ? 'page' : undefined}>
           <svg className="ui-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
             <path d="M2 12h5l3-8 4 16 3-8h5" />
           </svg>
           <span className="header-label">ECG Guide</span>
+          <span className="nav-short">ECG</span>
         </Link>
         <Link className={`home-btn utility-btn${nav === 'explorer' ? ' active-nav' : ''}`} id="explorerBtn" href="/explorer" title="ECG Explorer" aria-label="Open ECG Explorer" aria-current={nav === 'explorer' ? 'page' : undefined}>
           <svg className="ui-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.7">
@@ -301,12 +304,14 @@ export default function Topbar(): JSX.Element {
             <path d="M4 12h4l2-4 3 8 2-4h5" />
           </svg>
           <span className="header-label">ECG Explorer</span>
+          <span className="nav-short">Explore</span>
         </Link>
         <Link className={`home-btn utility-btn${nav === 'shift' ? ' active-nav' : ''}`} id="shiftBtn" href="/shift" title="Focused shift-ready view (V)" aria-label="Open focused shift view" aria-current={nav === 'shift' ? 'page' : undefined}>
           <svg className="ui-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
             <path d="m13 2-9 12h7l-1 8 10-12h-7z" />
           </svg>
           <span className="header-label">Shift View</span>
+          <span className="nav-short">Shift</span>
         </Link>
       </nav>
       <SearchBox />

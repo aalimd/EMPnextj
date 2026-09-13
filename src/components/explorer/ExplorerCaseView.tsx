@@ -108,6 +108,7 @@ export default function ExplorerCaseView({
   const [persisted, setPersisted] = useState(true);
   const [attempted, setAttempted] = useState<string[]>([]);
   const [practicePersisted, setPracticePersisted] = useState(true);
+  const [progressLoaded, setProgressLoaded] = useState(false);
   const paperRef = useRef<HTMLDivElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -143,11 +144,14 @@ export default function ExplorerCaseView({
     } catch {
       setAttempted([]);
     }
+    setProgressLoaded(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [caseId]);
 
-  // Persist location + student resume memory.
+  // Persist after stored progress has been read so the empty default
+  // does not wipe completions or flash a false storage warning.
   useEffect(() => {
+    if (!progressLoaded || !record) return;
     try {
       const ok = saveExplorerProgress({ ...progress, last: record.id, finding: st.finding });
       setPersisted(ok);
@@ -160,7 +164,7 @@ export default function ExplorerCaseView({
       /* best-effort */
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [record.id, st.finding]);
+  }, [progressLoaded, progress, record.id, st.finding]);
 
   const concealed = practice && !st.revealed;
   const item: ExplorerBuild = useMemo(() => {
