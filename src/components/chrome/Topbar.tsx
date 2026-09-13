@@ -152,9 +152,7 @@ function SearchBox(): JSX.Element {
                 onMouseEnter={() => setCursor(i)}
                 onClick={() => go(r)}
               >
-                <span className="res-ico" data-cat={r.cpId} aria-hidden="true">
-                  {r.cpId === 'ecg' ? '📈' : r.cpId === 'ecg-explorer' ? '🫀' : '•'}
-                </span>
+                <span className="res-ico" data-cat={r.cpId} data-kind={r.kind} aria-hidden="true" />
                 <span className="res-body">
                   <span className="r-title">{r.title}</span>
                   <span className="r-sub">{r.sub}</span>
@@ -297,7 +295,7 @@ export default function Topbar(): JSX.Element {
           </svg>
           <span className="header-label">ECG Guide</span>
         </Link>
-        <Link className={`home-btn utility-btn${nav === 'explorer' ? ' active-nav' : ''}`} id="explorerBtn" href="/explorer" aria-label="Open ECG Explorer" aria-current={nav === 'explorer' ? 'page' : undefined}>
+        <Link className={`home-btn utility-btn${nav === 'explorer' ? ' active-nav' : ''}`} id="explorerBtn" href="/explorer" title="ECG Explorer" aria-label="Open ECG Explorer" aria-current={nav === 'explorer' ? 'page' : undefined}>
           <svg className="ui-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.7">
             <rect x="3" y="4" width="18" height="16" rx="2" />
             <path d="M4 12h4l2-4 3 8 2-4h5" />

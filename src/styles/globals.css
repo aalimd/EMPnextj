@@ -5302,3 +5302,128 @@ a.side-btn { text-decoration: none; }
 .learning-workspace #caseFilter{max-width:420px}
 .learning-workspace h1:focus,.learning-workspace h2:focus,.workspace-feedback h3:focus{outline:none}
 @media(max-width:360px){.topbar>.primary-nav{grid-template-columns:1fr 1fr 1.3fr 1fr 1.2fr}}
+
+/* ── UI polish (last-wins): compact chrome, no competing mobile start paths ── */
+.home-actions .home-ecg {
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 10px 16px;
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  font-size: .84rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+.home-actions .home-ecg:hover { border-color: var(--hover-line); color: var(--ink); }
+.cp-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.cp-hero .back-btn { align-self: flex-start; margin-bottom: 10px; }
+.cp-hero .cp-ico-lg { margin-bottom: 10px; }
+.res-item .res-ico {
+  width: 8px;
+  height: 8px;
+  min-width: 8px;
+  border-radius: 50%;
+  margin-top: 7px;
+  background: var(--brand-2);
+  box-shadow: none;
+}
+.res-item .res-ico[data-kind="Interactive ECG"],
+.res-item .res-ico[data-kind="ECG"] { background: var(--crit, #c23b3b); }
+.res-item .res-ico[data-kind="Practice"],
+.res-item .res-ico[data-kind="Practice case"],
+.res-item .res-ico[data-kind="Skills"] { background: var(--emerg, #c47b12); }
+
+@media (min-width: 921px) {
+  .topbar { grid-template-columns: minmax(220px, 1fr) auto auto; }
+  .topbar > .burger { display: none !important; }
+  .topbar > .searchwrap { grid-column: 1; grid-row: 1; max-width: 460px; }
+  .topbar > .primary-nav { grid-column: 2; grid-row: 1; }
+  .topbar > .tools-toggle { grid-column: 3; grid-row: 1; }
+}
+
+@media (max-width: 920px) {
+  .topbar {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+    grid-template-rows: 44px 48px;
+    gap: 8px;
+    padding: max(8px, env(safe-area-inset-top, 8px)) 12px 8px;
+  }
+  .topbar > .burger {
+    display: flex !important;
+    grid-column: 1;
+    grid-row: 1;
+    width: 44px;
+    height: 44px;
+  }
+  .topbar > .searchwrap {
+    grid-column: 2;
+    grid-row: 1;
+    max-width: none;
+  }
+  .topbar > .tools-toggle {
+    grid-column: 3;
+    grid-row: 1;
+    width: 44px;
+    height: 44px;
+  }
+  .topbar > .primary-nav {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 4px;
+    width: 100%;
+  }
+  .primary-nav .home-btn,
+  .primary-nav #homeBtn,
+  .primary-nav #studyBtn,
+  .primary-nav #ecgBtn,
+  .primary-nav #explorerBtn,
+  .primary-nav #shiftBtn {
+    width: 100%;
+    min-width: 0;
+    height: 44px;
+    padding: 0;
+    justify-content: center;
+    gap: 0;
+  }
+  .primary-nav .home-btn .header-label,
+  .primary-nav #homeBtn .header-label,
+  .primary-nav #studyBtn .header-label,
+  .primary-nav #ecgBtn .header-label,
+  .primary-nav #explorerBtn .header-label,
+  .primary-nav #shiftBtn .header-label {
+    display: none !important;
+  }
+  .primary-nav .ui-icon { width: 20px; height: 20px; }
+  .primary-nav .home-btn.active-nav { background: var(--ov-job-bg); color: var(--brand-2); }
+}
+
+@media (max-width: 700px) {
+  .home-actions { display: none; }
+  .home-intro { padding-bottom: 12px; }
+  .home-intro h1 { font-size: 1.7rem; margin: 8px 0 8px; }
+  .workspace-entry { margin: 4px 0 12px; gap: 8px; }
+  .workspace-entry > a { padding: 14px 14px 12px; }
+  .workspace-entry p { display: none; }
+  .workspace-entry strong { font-size: .95rem; }
+  .workspace-entry span { font-size: .7rem; margin-bottom: 4px; }
+  .workspace-entry b { margin-top: 8px; font-size: .8rem; }
+  .student-start { padding: 14px 16px; margin: 8px 0 16px; }
+  .student-start h2 { font-size: 1.05rem; margin: 4px 0 8px; }
+  .student-start .student-actions { gap: 6px; }
+  .student-start .student-actions a { font-size: .8rem; }
+  .student-intro { padding: 12px 14px; }
+  .student-actions a { font-size: .8rem; }
+  .presentation-toc { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; }
+  .explorer-controls { padding: 12px; gap: 8px; }
+}
