@@ -3427,7 +3427,16 @@ input[type="search"]::-webkit-search-results-decoration {
   -webkit-appearance: none;
 }
 img, svg { max-width: 100%; }
-a { color: inherit; }
+a { color: inherit; text-decoration: none; }
+.foot a,
+.refs a,
+.explorer-source a,
+.workspace-source a,
+a[href^="mailto:"],
+a[target="_blank"] {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 
 /* Focus: visible ring with fallback for browsers without :focus-visible */
 :focus { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
@@ -5349,6 +5358,11 @@ a.side-btn { text-decoration: none; }
   .topbar > .tools-toggle { grid-column: 3; grid-row: 1; }
 }
 
+.explorer-finding-chooser .explorer-finding-list {
+  max-height: 280px;
+  overflow: auto;
+  margin-top: 8px;
+}
 .nav-short { display: none; }
 .side-group > summary {
   display: flex;

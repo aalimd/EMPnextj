@@ -98,7 +98,7 @@ export default function ExplorerCaseView({
     locating: false,
     locationFeedback: '',
     path: null,
-    findingMenu: false,
+    findingMenu: true,
     checklistOpen: false,
     pathOpen: false,
     enlarged: false,
@@ -207,7 +207,7 @@ export default function ExplorerCaseView({
         answer: '',
         observations: {},
         hint: false,
-        findingMenu: false,
+        findingMenu: true,
         region: 0,
         finding: 0,
         zoom: '1',
@@ -749,31 +749,40 @@ export default function ExplorerCaseView({
               <h3>
                 Findings <span>{item.findings.length}</span>
               </h3>
-              {item.findings.length > 4 ? (
-                <details
-                  className="explorer-finding-chooser"
-                  open={st.findingMenu}
-                  onToggle={(e) => patch({ findingMenu: (e.target as HTMLDetailsElement).open })}
-                >
-                  <summary>Choose a finding · {item.findings.length} available</summary>
-                </details>
-              ) : null}
-              <div className="explorer-finding-list">
-                {item.findings.map((f, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    data-finding={i}
-                    aria-pressed={i === findingIndex}
-                    onClick={() => {
-                      patch({ finding: i, findingMenu: false, region: 0, highlights: true, locationFeedback: '' });
+              {(() => {
+                const findingList = (
+                  <div className="explorer-finding-list">
+                    {item.findings.map((f, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        data-finding={i}
+                        aria-pressed={i === findingIndex}
+                        onClick={() => {
+                          patch({ finding: i, region: 0, highlights: true, locationFeedback: '' });
+                        }}
+                      >
+                        <span>{String(i + 1).padStart(2, '0')}</span>
+                        {f.title}
+                      </button>
+                    ))}
+                  </div>
+                );
+                if (item.findings.length <= 4) return findingList;
+                return (
+                  <details
+                    className="explorer-finding-chooser"
+                    open={st.findingMenu}
+                    onToggle={(e) => {
+                      const open = (e.target as HTMLDetailsElement).open;
+                      if (open !== st.findingMenu) patch({ findingMenu: open });
                     }}
                   >
-                    <span>{String(i + 1).padStart(2, '0')}</span>
-                    {f.title}
-                  </button>
-                ))}
-              </div>
+                    <summary>Choose a finding · {item.findings.length} available</summary>
+                    {findingList}
+                  </details>
+                );
+              })()}
               {finding ? (
                 <div className="explorer-explanation" role="status">
                   {detailCrop ? (
