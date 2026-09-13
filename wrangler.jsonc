@@ -1,0 +1,15 @@
+{
+  // Static export only. `next build` writes `out/`; this file stops
+  // `wrangler deploy` from auto-running OpenNext (which requires Next 15+
+  // and a Node worker). Do not add @opennextjs/cloudflare.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "empnextj",
+  "compatibility_date": "2026-09-13",
+  "workers_dev": true,
+  "preview_urls": true,
+  "assets": {
+    "directory": "./out",
+    "html_handling": "force-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}

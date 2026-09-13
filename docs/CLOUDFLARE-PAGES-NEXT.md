@@ -12,14 +12,19 @@ no environment variables, no Node.js runtime APIs.
 | Install command | `npm ci` (`npm install` works identically) |
 | Development command | `npm run dev` (`next dev`, local only — never deploy from this) |
 | Build command | `npm run build` (`next build`; runs lint + typecheck + static prerender of 211 pages) |
-| Build output directory | `out` |
-| Framework preset | Next.js (Static HTML Export) |
+| Deploy command | `npx wrangler deploy` (uses `wrangler.jsonc` → `out/`). Do **not** let Wrangler run OpenNext auto-setup. |
+| Build output directory | `out` (**never** `.next`) |
+| Framework preset | None / static assets (or Next.js Static HTML Export). Not OpenNext, not Workers Node runtime. |
 | Root directory | Repository root (or the `EMPnotPaid2` directory if imported as a subfolder) |
 | Node.js version | 18+ (tested on 22; set `NODE_VERSION=22` if the dashboard requires it) |
 | Environment variables / bindings | None |
 
 Key config (`next.config.js`): `output: 'export'`, `trailingSlash: true`,
-`images: { unoptimized: true }`. Every route is prerendered at build time
+`images: { unoptimized: true }`. `wrangler.jsonc` publishes `./out` as static
+assets. If Wrangler has no config, `npx wrangler deploy` auto-detects Next.js
+and tries OpenNext (Next 15+ only) — that path is wrong for this app.
+
+Every route is prerendered at build time
 (`generateStaticParams` covers all 45 topics, 27 ECG figures, 47 explorer
 cases, 12 short cases, 6 evolving cases, 6 modules, 5 visuals, 45 shift views),
 so **refreshing or directly opening any route never produces a Cloudflare 404**
