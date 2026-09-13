@@ -10,6 +10,7 @@ import { useDocTitle } from '@/lib/useDocTitle';
 const api = STUDENT_LEARNING as unknown as {
   render(index: number): string;
   bindPractice(root: Element): void;
+  rate(key: string, value: string): boolean;
 };
 
 /** Short clinical practice cases (legacy `caseHtml` + `bindPractice` parity). */
@@ -49,6 +50,28 @@ export default function StudyCaseView({ caseId }: { caseId?: string }): JSX.Elem
     };
     const onClick = (e: Event): void => {
       const el = e.target as Element;
+      const conf = el.closest?.('[data-confidence]') as HTMLElement | null;
+      if (conf) {
+        const box = conf.closest('[data-rating-key]') as HTMLElement | null;
+        if (box) {
+          const key = box.dataset.ratingKey ?? '';
+          const value = conf.dataset.confidence ?? '';
+          let ok = false;
+          try {
+            ok = api.rate(key, value);
+          } catch {
+            ok = false;
+          }
+          box.querySelectorAll('[data-confidence]').forEach((b) => {
+            b.setAttribute('aria-pressed', String(b === conf));
+          });
+          const status = box.querySelector('.confidence-status');
+          if (status) {
+            status.textContent = `Self-assessment saved${ok ? ' on this device.' : ' for this session only.'}`;
+          }
+        }
+        return;
+      }
       if (el.closest?.('[data-next-case]')) {
         const next = cursor + 1;
         const target = STUDENT_CASES[((next % STUDENT_CASES.length) + STUDENT_CASES.length) % STUDENT_CASES.length];

@@ -3,11 +3,11 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useId, useRef, useState } from 'react';
-import { resultHref, searchIndex } from '@/lib/search';
+import { resultHref } from '@/lib/search';
 import type { SearchResultItem } from '@/types';
 import { useChrome } from './ChromeContext';
 import { usePrefs } from '@/lib/preferences';
-import type { Accent, SeverityFilter } from '@/types';
+import type { Accent } from '@/types';
 
 const ACCENTS: Array<{ id: Accent; label: string }> = [
   { id: 'emerald', label: 'Emerald green theme' },
@@ -28,10 +28,31 @@ function SearchBox(): JSX.Element {
   const inputRef = useRef<HTMLInputElement>(null);
   const listId = useId();
 
+  // The index (topics + ECG + explorer + learning data) loads on first use
+  // so it doesn't inflate the initial page bundle.
   useEffect(() => {
-    setResults(searchIndex(q));
-    setCursor(-1);
-    setOpen(q.trim().length >= 2);
+    let cancelled = false;
+    if (q.trim().length < 2) {
+      setResults([]);
+      setCursor(-1);
+      setOpen(false);
+      return;
+    }
+    import('@/lib/searchIndex')
+      .then((m) => {
+        if (cancelled) return;
+        setResults(m.searchIndex(q));
+        setCursor(-1);
+        setOpen(true);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setResults([]);
+        setOpen(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [q]);
 
   useEffect(() => {
@@ -152,33 +173,6 @@ function SearchBox(): JSX.Element {
   );
 }
 
-function SeverityChips(): JSX.Element {
-  const { severity, setSeverity } = useChrome();
-  const chips: Array<{ id: SeverityFilter; label: string }> = [
-    { id: 'all', label: 'All' },
-    { id: 'critical', label: 'Critical' },
-    { id: 'emergent', label: 'Emergent' },
-    { id: 'common', label: 'Common' },
-  ];
-  return (
-    <div className="chips" id="filterChips" role="group" aria-label="Severity filter">
-      {chips.map((c) => (
-        <button
-          key={c.id}
-          className={`chip chip-${c.id}${severity === c.id ? ' active' : ''}`}
-          type="button"
-          data-sev={c.id}
-          aria-pressed={severity === c.id}
-          onClick={() => setSeverity(c.id)}
-        >
-          {c.id !== 'all' ? <span className={`sev-dot sev-${c.id}`} aria-hidden="true" /> : null}
-          {c.label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
 function ReadingTools(): JSX.Element {
   const { prefs, update, fontStep } = usePrefs();
   const [open, setOpen] = useState(false);
@@ -260,7 +254,7 @@ function ReadingTools(): JSX.Element {
 
 export default function Topbar(): JSX.Element {
   const pathname = usePathname();
-  const { setSidebarOpen } = useChrome();
+  const { sidebarOpen, setSidebarOpen } = useChrome();
   const nav = pathname === '/' ? 'home'
     : pathname.startsWith('/study') ? 'study'
     : pathname.startsWith('/shift') ? 'shift'
@@ -277,7 +271,7 @@ export default function Topbar(): JSX.Element {
         type="button"
         aria-label="Open presentations menu"
         aria-controls="sidebar"
-        aria-expanded="false"
+        aria-expanded={sidebarOpen}
         onClick={() => setSidebarOpen(true)}
       >
         <svg className="ui-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round">
@@ -318,10 +312,6 @@ export default function Topbar(): JSX.Element {
         </Link>
       </nav>
       <SearchBox />
-      <details className="context-filters">
-        <summary>Filter</summary>
-        <SeverityChips />
-      </details>
       <ReadingTools />
     </header>
   );

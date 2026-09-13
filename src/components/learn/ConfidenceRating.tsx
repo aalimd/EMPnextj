@@ -34,6 +34,10 @@ export function ConfidenceRating({ ratingKey }: { ratingKey: string }): JSX.Elem
     }
     setValue(v);
     setStatus(`Self-assessment saved${ok ? ' on this device.' : ' for this session only.'}`);
+    if (v === 'got' && ratingKey.startsWith('topic:')) {
+      const review = document.getElementById('reviewBtn');
+      if (review && review.getAttribute('aria-pressed') !== 'true') review.click();
+    }
   };
 
   return (

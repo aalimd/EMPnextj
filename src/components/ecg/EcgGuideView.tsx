@@ -6,7 +6,8 @@ import { ECG_GUIDE, ECG_CAT_LABEL } from '@/data/ecgGuide';
 import { useChrome } from '@/components/chrome/ChromeContext';
 import { useDocTitle } from '@/lib/useDocTitle';
 import { richHtml } from '@/lib/rich';
-import { EM_LEARNING } from '@/lib/learn/emLearning';
+import { evidenceContext } from '@/lib/learn/topicAids';
+import { rewriteLegacyHrefs } from '@/lib/legacyRoutes';
 import TopicIcon from '@/components/library/TopicIcon';
 import SectionCard from '@/components/topic/SectionCard';
 import RecallPractice from '@/components/topic/RecallPractice';
@@ -61,11 +62,11 @@ export default function EcgGuideView({ focus }: { focus?: string }): JSX.Element
     return true;
   });
 
-  let evidenceContext = '';
+  let evidenceCtx = '';
   try {
-    evidenceContext = (EM_LEARNING as unknown as { evidenceContext(id: string): string }).evidenceContext('ecg');
+    evidenceCtx = rewriteLegacyHrefs(evidenceContext('ecg'));
   } catch {
-    evidenceContext = '';
+    evidenceCtx = '';
   }
 
   return (
@@ -355,7 +356,7 @@ export default function EcgGuideView({ focus }: { focus?: string }): JSX.Element
 
       <SectionCard icon="📚" title="References" sectionKey="ecg-references" defaultClosed>
         <EvidenceList topicId="ecg" />
-        {evidenceContext ? <div dangerouslySetInnerHTML={{ __html: evidenceContext }} /> : null}
+        {evidenceCtx ? <div dangerouslySetInnerHTML={{ __html: evidenceCtx }} /> : null}
         <ul className="refs">
           {ecg.refs.map((r, i) => (
             <li key={i}>{r}</li>

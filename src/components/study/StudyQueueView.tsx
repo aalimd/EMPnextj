@@ -54,11 +54,13 @@ function TopicRow({ id }: { id: string }): JSX.Element {
 
 export default function StudyQueueView({ view }: { view: 'due' | 'saved' }): JSX.Element {
   const [ids, setIds] = useState<string[]>([]);
+  const [dueCount, setDueCount] = useState(0);
   useDocTitle('Study');
 
   useEffect(() => {
+    const valid = [...Object.keys(TOPIC_BY_ID), 'ecg'];
+    setDueCount(getDueIds(valid).length);
     if (view === 'due') {
-      const valid = [...Object.keys(TOPIC_BY_ID), 'ecg'];
       setIds(getDueIds(valid));
     } else {
       const saved = getSavedIds().filter((id) => TOPIC_BY_ID[id] || id === 'ecg');
@@ -82,7 +84,7 @@ export default function StudyQueueView({ view }: { view: 'due' | 'saved' }): JSX
       </div>
       <nav className="study-tabs" aria-label="Study views">
         <Link href="/study/due" aria-current={view === 'due' ? 'page' : undefined} className={view === 'due' ? 'active' : ''}>
-          Review queue <span>{view === 'due' ? ids.length : getDueCount()}</span>
+          Review queue <span>{dueCount}</span>
         </Link>
         <Link href="/study/saved" aria-current={view === 'saved' ? 'page' : undefined} className={view === 'saved' ? 'active' : ''}>
           Saved
@@ -115,13 +117,4 @@ export default function StudyQueueView({ view }: { view: 'due' | 'saved' }): JSX
       <StudyStarter />
     </>
   );
-}
-
-function getDueCount(): number {
-  if (typeof window === 'undefined') return 0;
-  try {
-    return getDueIds([...Object.keys(TOPIC_BY_ID), 'ecg']).length;
-  } catch {
-    return 0;
-  }
 }

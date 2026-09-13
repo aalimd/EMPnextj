@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { getEcgFigure } from '@/lib/ecg/api';
-import { ECG_WAVE_INFO, ECG_WAVE_NAMES, ECG_WAVE_ORDER, ecgWaveText } from '@/lib/ecg/waveInfo';
+import { ECG_WAVE_INFO, ECG_WAVE_NAMES, ECG_WAVE_ORDER } from '@/lib/ecg/waveInfo';
 import { closeEcgViewer, openEcgViewer } from '@/lib/ecg/api';
 
 const HINT = 'Hover or tap a wave — P · PR · QRS · ST · T · QT · CAL · RR.';
@@ -282,5 +282,3 @@ export default function EcgFigure({ figureId }: { figureId: string }): JSX.Eleme
     </figure>
   );
 }
-
-export { ecgWaveText };

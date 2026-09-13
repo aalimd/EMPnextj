@@ -1,11 +1,12 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import LearnWorkspace from '@/components/learn/LearnWorkspace';
+import { LEARNING_VISUALS } from '@/lib/learn/topicAids';
 
-const VISUALS = ['recordings', 'abg', 'lung', 'chest', 'ecg-pairs'] as const;
+const VISUAL_IDS = LEARNING_VISUALS.map(([id]) => id);
 
 export function generateStaticParams(): Array<{ id: string }> {
-  return VISUALS.map((id) => ({ id }));
+  return VISUAL_IDS.map((id) => ({ id }));
 }
 
 export function generateMetadata({ params }: { params: { id: string } }): Metadata {
@@ -13,6 +14,6 @@ export function generateMetadata({ params }: { params: { id: string } }): Metada
 }
 
 export default function LearnVisualPage({ params }: { params: { id: string } }): JSX.Element {
-  if (!(VISUALS as readonly string[]).includes(params.id)) notFound();
+  if (!VISUAL_IDS.includes(params.id)) notFound();
   return <LearnWorkspace target={`visual-${params.id}`} title="Visual learning" key={`learn-visual-${params.id}`} />;
 }

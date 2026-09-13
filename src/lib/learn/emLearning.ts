@@ -9,6 +9,7 @@
 import { EM_LEARNING_DATA } from '@/data/emLearning';
 import { STUDENT_LEARNING } from './studentLearning';
 import { ECG_EXPLORER } from '../ecg/explorer';
+import { evidenceContext, homeHtml, reassessmentHtml, sourceHtml } from './topicAids';
 
 let EM_ECG_RECORDINGS = [];
 export function setEcgRecordings(records) { EM_ECG_RECORDINGS = Array.isArray(records) ? records : []; }
@@ -46,19 +47,8 @@ const D = EM_LEARNING_DATA;
         try { localStorage.setItem(progressKey,JSON.stringify(memory)); volatile=false; return true; }
         catch (_) { volatile=true; return false; }
     }
-    function sourceHtml(key) {
-        const source=D.sources[key];
-        return source?'<details class="workspace-source"><summary>Source and scope</summary><p>Supporting teaching points checked '+D.checked+'. This is an educational synthesis, not an independently peer-reviewed protocol.</p><a href="'+esc(source[1])+'" target="_blank" rel="noopener noreferrer">'+esc(source[0])+'</a><p>Confirm patient context, full recommendations and local policy. External sources need an internet connection.</p></details>':'';
-    }
     function shell(title,description,active) {
         return '<section class="learning-workspace"><a class="back-btn" href="#">← Presentation library</a><p class="study-kicker">EM POCKET · LEARNING WORKSPACE</p><h1 tabindex="-1">'+esc(title)+'</h1><p class="workspace-lead">'+esc(description)+'</p><nav class="workspace-tabs" aria-label="Learning workspace">'+[['practice','Practice'],['visuals','Visual learning'],['skills','Procedures & teams'],['progress','My progress']].map(([id,label])=>'<a href="#learn~'+id+'"'+(id===active?' aria-current="page"':'')+'>'+label+'</a>').join('')+'</nav><div class="workspace-body"></div></section>';
-    }
-    function homeHtml() {
-        return '<section class="workspace-entry" aria-label="Choose how to use EM Pocket">' +
-            '<a href="#presentationLibrary" data-browse-library="1"><span>01 · Presentations</span><strong>Rosen’s Clinical Frameworks</strong><p>Explore 30+ emergency complaints with prioritized differentials, red flags, first minutes and disposition.</p></a>' +
-            '<a href="#ecg"><span>02 · ECG Masterclass</span><strong>10-Step ECG Curriculum &amp; Explorer</strong><p>Master rate, rhythm, axis, and ischemia from scratch with interactive 12-lead waveforms.</p></a>' +
-            '<a href="#learn~practice"><span>03 · Decision Practice</span><strong>Simulated Patient Scenarios</strong><p>Test your reasoning in evolving clinical cases, manage deterioration, and review debriefs.</p></a>' +
-            '</section>';
     }
     function caseCards() {
         const p=progress();
@@ -202,21 +192,6 @@ const D = EM_LEARNING_DATA;
         if(active==='practice'&&!target.startsWith('case-')&&!body.querySelector('.workspace-grid .workspace-card'))body.querySelector('.workspace-grid')?.insertAdjacentHTML('afterend','<p role="status">No cases match this filter. Choose All cases to explore the library.</p>');
         body.querySelector('#caseFilter')?.addEventListener('change',e=>{caseFilter=e.target.value;mount(stage,'practice');stage.querySelector('#caseFilter').focus();});
         stage.querySelector('h1').focus({preventScroll:true});window.scrollTo({top:0});
-    }
-    function reassessmentHtml(cp) {
-        return '<details class="reassessment-guide"><summary>Before the next decision · reassess and hand over</summary><div><p>Use these learning prompts with the presentation’s pathway. They are not discharge criteria.</p><ol><li><strong>Reassess:</strong> compare symptoms, observations and examination with the initial assessment and response to treatment.</li><li><strong>Warning signs for '+esc(cp.name)+':</strong><ul>'+((cp.redFlags||[]).map(t=>'<li>'+esc(t)+'</li>').join(''))+'</ul></li><li><strong>Reconsider:</strong> check unresolved findings and alternative explanations, including the pitfalls below.</li><li><strong>Escalate:</strong> communicate deterioration, uncertainty or needs beyond the current setting.</li><li><strong>Plan the transition:</strong> identify outstanding results, responsibility for follow-up, patient understanding and specific return advice.</li></ol><a href="#'+esc(cp.id)+'~disposition">Review this presentation’s disposition pathway →</a><a href="#learn~module-handover">Practice a handover →</a></div></details>';
-    }
-    function evidenceContext(id) {
-        const contexts={
-            'chest-pain':['Troponin pathways','Identify the assay, symptom timing and the validated pathway used locally. A result inside the reference range is not automatically a complete rule-out.','acs'],
-            'multiple-trauma':['Resources and definitive care','Check the local trauma activation, trained procedural team and transfer arrangements. Imaging availability does not remove the need to respond to instability.','trauma'],
-            'pediatric-respiratory-distress':['Age and clinical course','Check age, underlying conditions, feeding and episodes of apnea against the full pediatric pathway. One improved observation does not describe the whole course.','pediatric'],
-            'pregnancy-emergency':['Escalation and access','Know the local route to urgent obstetric/gynecologic assessment and supported transfer. Clinical instability must guide the urgency while tests are pending.','pregnancy'],
-            'overdose':['Exposure and observation','The substance, recurrence and clinical course affect treatment and monitoring needs. Use substance-specific guidance and toxicology advice rather than one fixed observation period.','opioid'],
-            'suicidal':['Assessment and safety planning','A numeric risk category must not determine discharge after self-harm. Use an individual psychosocial assessment and a collaborative plan, alongside local legal and safeguarding requirements.','mental']
-        };
-        const item=contexts[id];if(!item)return '';
-        return '<div class="workspace-callout evidence-context"><h3>'+esc(item[0])+'</h3><p>'+esc(item[1])+'</p>'+sourceHtml(item[2])+'</div>';
     }
     function searchItems(){return [...D.cases.map(c=>({cpId:'learn',target:'case-'+c.id,title:c.title,sub:c.domain+' evolving case',kind:'Practice'})),...D.modules.map(m=>({cpId:'learn',target:'module-'+m.id,title:m.title,sub:m.kind,kind:'Skills'})),...visuals.map(([id,title,text])=>({cpId:'learn',target:'visual-'+id,title,sub:text,kind:'Visual learning'})),{cpId:'learn',target:'progress',title:'Export or import learning backup',sub:'Progress, saved notes and preferences',kind:'My progress'}];}
     export const EM_LEARNING={mount,homeHtml,reassessmentHtml,evidenceContext,searchItems,progress,saveProgress,normalizeProgress,validateBackup,exportBackup,importBackup,mergeExisting,backupKeys,visuals};

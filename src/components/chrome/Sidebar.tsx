@@ -16,6 +16,7 @@ export default function Sidebar(): JSX.Element {
 
   const activeTopic = pathname.startsWith('/topic/') ? pathname.split('/')[2] : null;
   const onHome = pathname === '/';
+  const collapsed = prefs.sidebar;
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent): void => {
@@ -25,7 +26,28 @@ export default function Sidebar(): JSX.Element {
     return () => document.removeEventListener('keydown', onKey);
   }, [sidebarOpen, setSidebarOpen]);
 
-  const collapsed = prefs.sidebar;
+  // Legacy parity: hidden sidebar is removed from the accessibility tree
+  // (mobile drawer closed, or desktop rail collapsed).
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 920px)');
+    const sync = (): void => {
+      const el = document.getElementById('sidebar');
+      if (!el) return;
+      const hidden = (mq.matches && !sidebarOpen) || (!mq.matches && collapsed);
+      const sidebar = el as HTMLElement & { inert?: boolean };
+      try {
+        if (typeof sidebar.inert === 'boolean') sidebar.inert = hidden;
+        else if (hidden) sidebar.setAttribute('inert', '');
+        else sidebar.removeAttribute('inert');
+      } catch {
+        /* inert is best-effort */
+      }
+      sidebar.setAttribute('aria-hidden', hidden ? 'true' : 'false');
+    };
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, [sidebarOpen, collapsed]);
 
   return (
     <>

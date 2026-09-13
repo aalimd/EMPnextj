@@ -14,25 +14,25 @@
         {
             "name": "Chest Pain",
             "short_name": "Chest Pain",
-            "url": "./topic/chest-pain",
+            "url": "./topic/chest-pain/",
             "icons": [{"src": "icon-192.png?v=20260911-streamline-r1", "sizes": "192x192"}]
         },
         {
             "name": "Shortness of Breath",
             "short_name": "Dyspnea",
-            "url": "./topic/dyspnea",
+            "url": "./topic/dyspnea/",
             "icons": [{"src": "icon-192.png?v=20260911-streamline-r1", "sizes": "192x192"}]
         },
         {
             "name": "Suspected Stroke",
             "short_name": "Stroke",
-            "url": "./topic/focal-neurologic-deficit",
+            "url": "./topic/focal-neurologic-deficit/",
             "icons": [{"src": "icon-192.png?v=20260911-streamline-r1", "sizes": "192x192"}]
         },
         {
             "name": "ECG from scratch",
             "short_name": "ECG",
-            "url": "./ecg",
+            "url": "./ecg/",
             "icons": [{"src": "icon-192.png?v=20260911-streamline-r1", "sizes": "192x192"}]
         }
     ],

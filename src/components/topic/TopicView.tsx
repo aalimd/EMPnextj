@@ -7,14 +7,15 @@ import { TOPICS, getTopic } from '@/data/topics';
 import { GROUPS, RELATED } from '@/lib/libraryMeta';
 import { useChrome } from '@/components/chrome/ChromeContext';
 import { useDocTitle } from '@/lib/useDocTitle';
-import { EM_LEARNING } from '@/lib/learn/emLearning';
+import { evidenceContext, reassessmentHtml } from '@/lib/learn/topicAids';
+import { rewriteLegacyHrefs } from '@/lib/legacyRoutes';
 import TopicIcon from '@/components/library/TopicIcon';
 import SectionCard from './SectionCard';
 import RedFlagChecklist from './RedFlagChecklist';
 import RecallPractice from './RecallPractice';
 import { PersonalPlan, ReviewButton } from './LearningControls';
 import EvidenceList from './EvidenceList';
-import { GuidedReasoning, StudentIntro } from '@/components/learn/StudentEnhancements';
+import { GuidedReasoning, StudentIntro, rememberRoute } from '@/components/learn/StudentEnhancements';
 
 const SEV_LABEL: Record<string, string> = { critical: 'Critical', emergent: 'Emergent', common: 'Common' };
 
@@ -74,9 +75,10 @@ function orderedIds(): string[] {
   return out;
 }
 
-function jumpToSection(key: string): void {
+function jumpToSection(key: string, rememberId?: string): void {
   const card = document.getElementById(`section-${key}`);
   if (!card) return;
+  if (rememberId) rememberRoute(`${rememberId}~${key}`);
   const parent = card.classList.contains('section-card') ? card : card.closest('.section-card');
   if (parent?.classList.contains('closed')) {
     parent.classList.remove('closed');
@@ -100,7 +102,7 @@ export default function TopicView({ topic }: { topic: ClinicalTopic }): JSX.Elem
   useEffect(() => {
     const fromHash = (): void => {
       const hash = window.location.hash.replace(/^#section-/, '');
-      if (hash) jumpToSection(hash);
+      if (hash) jumpToSection(hash, topic.id);
     };
     const t = window.setTimeout(fromHash, 60);
     window.addEventListener('hashchange', fromHash);
@@ -129,13 +131,13 @@ export default function TopicView({ topic }: { topic: ClinicalTopic }): JSX.Elem
   const related = (RELATED[topic.id] ?? []).map((id) => getTopic(id)).filter((t): t is ClinicalTopic => Boolean(t));
 
   let reassessment = '';
-  let evidenceContext = '';
+  let evidenceCtx = '';
   try {
-    reassessment = (EM_LEARNING as unknown as { reassessmentHtml(cp: ClinicalTopic): string }).reassessmentHtml(topic);
-    evidenceContext = (EM_LEARNING as unknown as { evidenceContext(id: string): string }).evidenceContext(topic.id);
+    reassessment = rewriteLegacyHrefs(reassessmentHtml(topic));
+    evidenceCtx = rewriteLegacyHrefs(evidenceContext(topic.id));
   } catch {
     reassessment = '';
-    evidenceContext = '';
+    evidenceCtx = '';
   }
 
   const firstAction = topic.approach[0] ?? 'Stabilize the patient, then use the local pathway.';
@@ -167,7 +169,7 @@ export default function TopicView({ topic }: { topic: ClinicalTopic }): JSX.Elem
 
       <nav className="presentation-toc" aria-label="Presentation sections">
         {toc.map(([key, label]) => (
-          <button key={key} type="button" className="section-jump" data-jump={key} onClick={() => jumpToSection(key)}>
+          <button key={key} type="button" className="section-jump" data-jump={key} onClick={() => jumpToSection(key, topic.id)}>
             {label}
           </button>
         ))}
@@ -369,8 +371,8 @@ export default function TopicView({ topic }: { topic: ClinicalTopic }): JSX.Elem
 
       <SectionCard icon="📚" title="References" sectionKey="references" defaultClosed>
         <EvidenceList topicId={topic.id} />
-        {evidenceContext ? (
-          <div dangerouslySetInnerHTML={{ __html: evidenceContext }} />
+        {evidenceCtx ? (
+          <div dangerouslySetInnerHTML={{ __html: evidenceCtx }} />
         ) : null}
         <ul className="refs">
           {topic.refs.map((r, i) => (

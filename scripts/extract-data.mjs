@@ -104,7 +104,9 @@ console.log(JSON.stringify(snap, null, 2));
 fs.mkdirSync(outDir, { recursive: true });
 fs.writeFileSync(path.join(outDir, 'audit.json'), JSON.stringify(snap, null, 2));
 
-// Full dumps for byte-exact TS generation (large but verbatim, no medical edits)
+// Full dumps for byte-exact TS generation (verbatim, no medical edits).
+// Only live sources are dumped; transient snapshots (full SVG library,
+// curriculum cases) are verified at migration time, not stored.
 function dump(name, value) {
   fs.writeFileSync(path.join(outDir, name + '.json'), JSON.stringify(value));
   console.log('dumped', name, JSON.stringify(value ?? null).length, 'chars');
@@ -112,8 +114,20 @@ function dump(name, value) {
 dump('CP_DATA', sandbox.CP_DATA);
 dump('ECG_DATA', sandbox.ECG_DATA);
 dump('CLINICAL_EVIDENCE', sandbox.CLINICAL_EVIDENCE);
-dump('ECG_CURRICULUM', sandbox.ECG_CURRICULUM?.cases ?? null);
 dump('EM_LEARNING_DATA', sandbox.EM_LEARNING_DATA);
-dump('ECG_SVG', sandbox.ECG_SVG);
 dump('ECG_EXPLORER_CASES', sandbox.ECG_EXPLORER?.cases ?? null);
 dump('STUDENT_CASES', sandbox.STUDENT_LEARNING?.cases ?? null);
+
+// Lightweight figure title/caption index (search + links without the engine).
+const svgLib = sandbox.ECG_SVG ?? {};
+const figureIndex = Object.fromEntries(
+  Object.entries(svgLib).map(([id, entry]) => [
+    id,
+    {
+      title: typeof entry.title === 'string' ? entry.title : id,
+      caption: typeof entry.caption === 'string' ? entry.caption : '',
+    },
+  ]),
+);
+fs.writeFileSync(path.join(outDir, 'ECG_FIGURE_INDEX.json'), JSON.stringify(figureIndex));
+console.log('dumped ECG_FIGURE_INDEX', Object.keys(figureIndex).length, 'figures');

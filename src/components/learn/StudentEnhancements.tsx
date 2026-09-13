@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { STUDENT_LEARNING } from '@/lib/learn/studentLearning';
 import { GLOSSARY } from '@/data/glossary';
+import SeverityChips from '@/components/chrome/SeverityChips';
 
 interface StudentApi {
   remember(route: string): void;
@@ -13,6 +14,15 @@ interface StudentApi {
 }
 
 const api = STUDENT_LEARNING as unknown as StudentApi;
+
+/** Records the last-visited route for the resume track (legacy `remember` parity). Best-effort. */
+export function rememberRoute(route: string): void {
+  try {
+    api.remember(route);
+  } catch {
+    /* Progress memory is best-effort. */
+  }
+}
 
 export function StudentIntro({ topicId }: { topicId: string }): JSX.Element {
   useEffect(() => {
@@ -43,6 +53,10 @@ export function StudentIntro({ topicId }: { topicId: string }): JSX.Element {
             </div>
           ))}
         </dl>
+      </details>
+      <details className="context-filters">
+        <summary>Filter</summary>
+        <SeverityChips />
       </details>
     </section>
   );

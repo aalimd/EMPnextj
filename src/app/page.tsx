@@ -6,9 +6,11 @@ import { TOPIC_BY_ID, TOPICS } from '@/data/topics';
 import { GROUPS, PATIENT_CONTEXTS } from '@/lib/libraryMeta';
 import { useChrome } from '@/components/chrome/ChromeContext';
 import { useDocTitle } from '@/lib/useDocTitle';
-import { EM_LEARNING } from '@/lib/learn/emLearning';
+import { homeHtml } from '@/lib/learn/topicAids';
+import { rewriteLegacyHrefs } from '@/lib/legacyRoutes';
 import { getDueIds, getSavedIds, readLearningStore, reviewLabelFor } from '@/lib/learning';
 import TopicIcon from '@/components/library/TopicIcon';
+import SeverityChips from '@/components/chrome/SeverityChips';
 import StudyStarter from '@/components/study/StudyStarter';
 import { STUDENT_LEARNING } from '@/lib/learn/studentLearning';
 import type { PatientFilter } from '@/types';
@@ -25,13 +27,11 @@ const PATIENT_FILTERS: Array<[PatientFilter, string]> = [
 function WorkspaceEntry(): JSX.Element {
   let html = '';
   try {
-    html = (EM_LEARNING as unknown as { homeHtml(): string }).homeHtml();
+    html = homeHtml();
   } catch {
     html = '';
   }
-  const mapped = html
-    .replaceAll('href="#ecg"', 'href="/ecg"')
-    .replaceAll('href="#learn~practice"', 'href="/study/learn/practice"');
+  const mapped = rewriteLegacyHrefs(html);
   const onClick = (e: React.MouseEvent): void => {
     const browse = (e.target as Element).closest?.('[data-browse-library]');
     if (browse) {
@@ -186,6 +186,10 @@ export default function HomePage(): JSX.Element {
                 </button>
               ))}
             </div>
+          </details>
+          <details className="context-filters">
+            <summary>Filter</summary>
+            <SeverityChips />
           </details>
         </div>
         {groups.length ? (

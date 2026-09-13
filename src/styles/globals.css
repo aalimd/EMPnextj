@@ -3167,6 +3167,12 @@ html[data-theme="dark"] .rf-progress { background: #3d1c1c; }
 .disclaimer-overlay[hidden] {
     display: none !important;
 }
+html[data-disclaimer="pending"] .skip-link,
+html[data-disclaimer="pending"] .sidebar,
+html[data-disclaimer="pending"] .side-backdrop,
+html[data-disclaimer="pending"] .main {
+    visibility: hidden;
+}
 @keyframes fadeInOverlay {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -4402,7 +4408,7 @@ html[data-theme="dark"] .ecg-wavebtn[aria-pressed="true"] { background: var(--ac
 .hide-labels .ecg-marker, .hide-labels .ecg-label:not(.ecg-lead) { display: none; }
 .ecg-workbench .ecg-lightbox-card { max-width: 1200px; max-height: calc(100dvh - 32px); overflow-y: auto; }
 .ecg-workbench .ecg-lightbox-head { position: sticky; top: 0; z-index: 2; background: var(--card); }
-.ecg-workbench-tools, .ecg-caliper-inputs { display: flex; flex-wrap: wrap; align-items: end; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+.ecg-workbench-tools, .ecg-caliper-inputs { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
 .ecg-workbench-tools label, .ecg-caliper-inputs label { display: grid; gap: 4px; font-size: .75rem; color: var(--ink-soft); }
 .ecg-workbench-tools select, .ecg-workbench-tools button, .ecg-caliper-inputs input { min-height: 44px; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: var(--card); color: var(--ink); font: inherit; }
 .ecg-caliper-inputs input { width: 140px; }
@@ -4895,7 +4901,7 @@ html[data-theme="dark"] [data-cat="home"], html[data-theme="dark"] [data-cat="ge
 .ex-button:hover { border-color: var(--brand-2); }
 .ex-primary, .ex-button[aria-pressed="true"] { background: var(--brand); color: var(--on-fill); border-color: var(--brand); }
 .explorer-heading > .ex-button { flex-shrink: 0; background: var(--brand); color: var(--on-fill); }
-.explorer-controls { display: flex; align-items: end; flex-wrap: wrap; gap: 10px; padding: 16px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; margin-bottom: 16px; }
+.explorer-controls { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 10px; padding: 16px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; margin-bottom: 16px; }
 .explorer-controls label { display: grid; gap: 6px; font-size: .75rem; color: var(--ink-soft); min-width: 0; }
 .explorer-controls label:first-child { flex: 1; min-width: 220px; }
 .explorer-controls select { min-height: 44px; font: inherit; font-size: .85rem; color: var(--ink); background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; min-width: 0; width: 100%; }

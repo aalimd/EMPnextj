@@ -4,7 +4,9 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { STUDENT_LEARNING } from '@/lib/learn/studentLearning';
 import { getTopic } from '@/data/topics';
-import { getExplorerCases } from '@/lib/ecg/api';
+import { EXPLORER_INDEX } from '@/data/explorerIndex';
+import { STUDENT_CASES } from '@/data/studentCases';
+import { hashToPath } from '@/lib/legacyRoutes';
 
 interface Ratings {
   ratings: Record<string, { value: string; at: number }>;
@@ -22,12 +24,14 @@ function weakHref(key: string): { href: string; label: string; state: string } |
   const id = key.split(':')[1];
   const state = value.value === 'again' ? 'Review again' : 'Partly confident';
   if (key.startsWith('ecg:')) {
-    const found = getExplorerCases().find((c) => c.id === id);
+    const found = EXPLORER_INDEX.find((c) => c.id === id);
     if (!found) return null;
     return { href: `/explorer/${id}`, label: found.name, state };
   }
   if (key.startsWith('case:')) {
-    return { href: `/study/case/${id}`, label: id, state };
+    const found = STUDENT_CASES.find((c) => c.id === id);
+    if (!found) return null;
+    return { href: `/study/case/${id}`, label: found.title, state };
   }
   const topic = getTopic(id);
   if (!topic) return null;
@@ -35,16 +39,7 @@ function weakHref(key: string): { href: string; label: string; state: string } |
 }
 
 function lastHref(last: string): string {
-  if (/^(?:ecg(?:-explorer)?|[a-z-]+)(?:~[a-z0-9-]+)?$/.test(last)) {
-    const [id, target] = last.split('~');
-    if (id === 'ecg-explorer') return target ? `/explorer/${target}` : '/explorer';
-    if (id === 'ecg') return '/ecg';
-    if (id === 'study') return `/study/${target ?? 'due'}`;
-    if (id === 'learn') return '/study/learn/practice';
-    if (id === 'shift') return target ? `/shift/${target}` : '/shift';
-    return target ? `/topic/${id}#section-${target}` : `/topic/${id}`;
-  }
-  return '/';
+  return hashToPath(`#${last}`) ?? '/';
 }
 
 /**

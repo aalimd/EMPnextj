@@ -77,10 +77,18 @@ export function PrefsProvider({ children }: { children: React.ReactNode }): JSX.
 
   useEffect(() => {
     setPrefs(readPrefs());
+    let agreed = false;
     try {
-      setDisclaimerAgreed(localStorage.getItem(DISCLAIMER_KEY) === '1');
+      agreed = localStorage.getItem(DISCLAIMER_KEY) === '1';
     } catch {
-      setDisclaimerAgreed(false);
+      agreed = false;
+    }
+    setDisclaimerAgreed(agreed);
+    try {
+      if (agreed) document.documentElement.removeAttribute('data-disclaimer');
+      else document.documentElement.setAttribute('data-disclaimer', 'pending');
+    } catch {
+      /* attribute is best-effort */
     }
     setHydrated(true);
   }, []);
@@ -114,6 +122,11 @@ export function PrefsProvider({ children }: { children: React.ReactNode }): JSX.
     } catch {
       /* Agreement applies for this session only when storage is blocked. */
     }
+    try {
+      document.documentElement.removeAttribute('data-disclaimer');
+    } catch {
+      /* attribute is best-effort */
+    }
     setDisclaimerAgreed(true);
   }, []);
 
@@ -128,11 +141,4 @@ export function usePrefs(): PrefsContextValue {
   const ctx = useContext(PrefsContext);
   if (!ctx) throw new Error('usePrefs must be used within PrefsProvider');
   return ctx;
-}
-
-export function useThemeMeta(theme: Theme): void {
-  useEffect(() => {
-    const meta = document.getElementById('themeColor');
-    if (meta) meta.setAttribute('content', theme === 'light' ? '#ffffff' : '#151d27');
-  }, [theme]);
 }

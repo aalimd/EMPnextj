@@ -109,6 +109,7 @@ export default function ExplorerCaseView({
   const [attempted, setAttempted] = useState<string[]>([]);
   const [practicePersisted, setPracticePersisted] = useState(true);
   const paperRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   useDocTitle(record ? `${record.name} — ECG Explorer` : 'ECG Explorer');
 
@@ -184,6 +185,17 @@ export default function ExplorerCaseView({
   const patch = useCallback((p: Partial<ExplorerState>) => {
     setSt((s) => ({ ...s, ...p }));
   }, []);
+
+  // Enlarged-view dialog: Escape closes, focus starts on the close action.
+  useEffect(() => {
+    if (!st.enlarged) return;
+    dialogRef.current?.querySelector('button')?.focus({ preventScroll: true });
+    const onKey = (e: KeyboardEvent): void => {
+      if (e.key === 'Escape') patch({ enlarged: false });
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [st.enlarged, patch]);
 
   const resetReading = useCallback(
     (keepPractice: boolean) => {
@@ -908,7 +920,7 @@ export default function ExplorerCaseView({
       ) : null}
 
       {st.enlarged ? (
-        <div className="explorer-dialog" role="dialog" aria-modal="true" aria-label="ECG Explorer enlarged view">
+        <div className="explorer-dialog" ref={dialogRef} role="dialog" aria-modal="true" aria-label="ECG Explorer enlarged view">
           <div className="explorer-dialog-card">
             <div className="explorer-dialog-head">
               <strong>{item.record.name}</strong>

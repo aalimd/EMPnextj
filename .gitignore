@@ -21,3 +21,6 @@ Thumbs.db
 # Logs / temp
 *.log
 *.tmp
+
+# Local Pages / Wrangler preview state
+.wrangler/

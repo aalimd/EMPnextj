@@ -27,8 +27,15 @@ const HEADER = (src) => `// @ts-nocheck — verbatim legacy port (documented exc
  */
 `;
 
-function stripIife(src) {
-  let s = src;
+/** Removes a top-level `function name(...) {...}` block between markers. */
+function cutFunction(s, startMarker, endMarker) {
+  const start = s.indexOf(startMarker);
+  const end = s.indexOf(endMarker, start);
+  if (start === -1 || end === -1 || end < start) throw new Error('cutFunction markers not found: ' + startMarker);
+  return s.slice(0, start) + s.slice(end + 1);
+}
+
+function stripIife(src) {  let s = src;
   // Remove license/header comment? No — keep comments. Only strip wrapper:
   s = s.replace(/\(function\s*\(\)\s*\{\s*/, '');
   s = s.replace(/'use strict';\s*/, '');
@@ -145,13 +152,21 @@ function portEmLearning() {
   s = s.replace(/window\.ECG_EXPLORER/g, 'ECG_EXPLORER');
   s = s.replace(/window\.EM_ECG_RECORDINGS/g, 'EM_ECG_RECORDINGS');
   s = s.replace('window.EM_LEARNING=', 'export const EM_LEARNING=');
+  // Static snippets (home/reassessment/evidence) live in ./topicAids (single
+  // source, byte-identical output verified); the engine re-exports them here
+  // so legacy `EM_LEARNING.*` call sites keep working.
+  s = cutFunction(s, '    function sourceHtml(key) {', '\n    function shell(');
+  s = cutFunction(s, '    function homeHtml() {', '\n    function caseCards()');
+  s = cutFunction(s, '    function reassessmentHtml(cp) {', '\n    function evidenceContext(id) {');
+  s = cutFunction(s, '    function evidenceContext(id) {', '\n    function searchItems()');
   // Performance: the 884KB PTB-XL recording bank lazy-loads only when the
   // recordings visual opens (see LearnWorkspace). Same content, deferred fetch.
   const body =
     HEADER('assets/em-learning.js') +
     "import { EM_LEARNING_DATA } from '@/data/emLearning';\n" +
     "import { STUDENT_LEARNING } from './studentLearning';\n" +
-    "import { ECG_EXPLORER } from '../ecg/explorer';\n\n" +
+    "import { ECG_EXPLORER } from '../ecg/explorer';\n" +
+    "import { evidenceContext, homeHtml, reassessmentHtml, sourceHtml } from './topicAids';\n\n" +
     'let EM_ECG_RECORDINGS = [];\n' +
     'export function setEcgRecordings(records) { EM_ECG_RECORDINGS = Array.isArray(records) ? records : []; }\n\n' +
     s;
@@ -165,7 +180,9 @@ function portStudentLearning() {
   const src = fs.readFileSync(path.join(root, 'assets', 'student-learning.js'), 'utf8');
   let s = stripIife(src);
   s = s.replace(/window\.CP_DATA/g, 'CP_DATA_TOPICS');
-  s = s.replace(/window\.ECG_EXPLORER/g, 'ECG_EXPLORER');
+  // Name lookups use the lightweight verbatim index (same data, no engine chain).
+  s = s.replace(/window\.ECG_EXPLORER/g, 'ECG_EXPLORER_INDEX');
+  s = s.replace(/ECG_EXPLORER_INDEX\.cases/g, 'ECG_EXPLORER_INDEX');
   s = s.replace('window.STUDENT_LEARNING=', 'export const STUDENT_LEARNING=');
   // Legacy auto-start moved topbar filters and bound global listeners; the
   // React shell owns the DOM now, so enhancement runs only on explicit opt-in.
@@ -177,7 +194,7 @@ function portStudentLearning() {
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(path.join(dir, 'studentLearning.ts'), HEADER('assets/student-learning.js') +
     "import { TOPICS as CP_DATA_TOPICS } from '@/data/topics';\n" +
-    "import { ECG_EXPLORER } from '../ecg/explorer';\n\n" + s);
+    "import { EXPLORER_INDEX as ECG_EXPLORER_INDEX } from '@/data/explorerIndex';\n\n" + s);
 }
 function portExplorer() {
   const src = fs.readFileSync(path.join(root, 'assets', 'ecg-explorer.js'), 'utf8');
